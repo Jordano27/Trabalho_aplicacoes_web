@@ -150,12 +150,6 @@ Authorization: Bearer <token>
 npm test
 ```
 
-### Cobertura
-
-```bash
-npm run test:coverage
-```
-
 ## Lint e formatação
 
 ### Verificar lint
