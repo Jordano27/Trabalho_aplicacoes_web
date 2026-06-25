@@ -1,0 +1,442 @@
+{
+    "info": {
+        "_postman_id": "4c2c4b02-ef0f-4f2c-9b0d-0c8d1d4d8f90",
+        "name": "API Adocao Pets",
+        "description": "Colecao da API de adocao de pets com autenticacao JWT, CRUD e adocao.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Login Admin",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@pets.com\",\n  \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "login"
+                            ]
+                        },
+                        "description": "Faz login como admin e grava o token em adminToken."
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "const data = pm.response.json();",
+                                    "if (data.token) {",
+                                    "    pm.environment.set('adminToken', data.token);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Login Adopter",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"joao@email.com\",\n  \"password\": \"senha123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "login"
+                            ]
+                        },
+                        "description": "Faz login como adopter e grava o token em adopterToken."
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "const data = pm.response.json();",
+                                    "if (data.token) {",
+                                    "    pm.environment.set('adopterToken', data.token);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Users",
+            "item": [
+                {
+                    "name": "Create User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Joao Silva\",\n  \"email\": \"joao@email.com\",\n  \"password\": \"senha123\",\n  \"phone\": \"51999999999\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "users"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "users"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get User By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/users/1",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "users",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update User",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Joao Silva Atualizado\",\n  \"phone\": \"51777777777\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/users/2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "users",
+                                "2"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete User",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/users/3",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "users",
+                                "3"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Pets",
+            "item": [
+                {
+                    "name": "Get Available Pets",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/available",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "available"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Pets",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Pet By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/1",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Pet",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Rex\",\n  \"age\": 3,\n  \"species\": \"dog\",\n  \"size\": \"medium\",\n  \"description\": \"Cao amigavel\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/pets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Pet",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Rex Atualizado\",\n  \"age\": 4,\n  \"description\": \"Cao adulto muito docil\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/1",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Pet",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/pets/2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "pets",
+                                "2"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Adoptions",
+            "item": [
+                {
+                    "name": "Adopt Pet",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adopterToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"pet_id\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/adoptions",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "adoptions"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "List Adoptions",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/adoptions",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "adoptions"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000"
+        },
+        {
+            "key": "adminToken",
+            "value": ""
+        },
+        {
+            "key": "adopterToken",
+            "value": ""
+        }
+    ]
+}
