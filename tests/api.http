@@ -1,0 +1,296 @@
+### ============================================================
+### API de Adoção de Pets - Testes REST Client
+### Instale a extensão "REST Client" no VS Code para usar este arquivo
+### ============================================================
+
+### Variáveis de ambiente
+@baseUrl = http://localhost:3000
+@adminToken = COLE_O_TOKEN_ADMIN_AQUI
+@adopterToken = COLE_O_TOKEN_ADOPTER_AQUI
+
+### ============================================================
+### HEALTH CHECK
+### ============================================================
+
+### Verificar API online
+GET {{baseUrl}}/
+
+### ============================================================
+### AUTENTICAÇÃO
+### ============================================================
+
+### [POST] Login como admin (use o token retornado nas variáveis acima)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "admin@pets.com",
+  "password": "admin123"
+}
+
+###
+
+### [POST] Login como adopter
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "joao@email.com",
+  "password": "senha123"
+}
+
+###
+
+### [POST] Login com credenciais inválidas (deve retornar 401)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "admin@pets.com",
+  "password": "senhaerrada"
+}
+
+### ============================================================
+### USUÁRIOS - Rotas Públicas
+### ============================================================
+
+### [POST] Cadastrar novo usuário adopter (público)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "password": "senha123",
+  "phone": "51999999999",
+  "role": "adopter"
+}
+
+###
+
+### [POST] Cadastro público ignora role enviada e cria adopter
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Maria Silva",
+  "email": "maria@email.com",
+  "password": "senha123",
+  "phone": "51888888888",
+  "role": "admin"
+}
+
+###
+
+### [POST] Tentar cadastrar email duplicado (deve retornar 409)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Outro Usuário",
+  "email": "joao@email.com",
+  "password": "senha123"
+}
+
+### ============================================================
+### USUÁRIOS - Rotas Protegidas (Admin)
+### ============================================================
+
+### [GET] Listar todos os usuários (admin)
+GET {{baseUrl}}/users
+Authorization: Bearer {{adminToken}}
+
+###
+
+### [GET] Buscar usuário por ID (admin)
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{adminToken}}
+
+###
+
+### [PUT] Atualizar usuário (admin)
+PUT {{baseUrl}}/users/2
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "João Silva Atualizado",
+  "phone": "51777777777"
+}
+
+###
+
+### [DELETE] Remover usuário (admin)
+DELETE {{baseUrl}}/users/3
+Authorization: Bearer {{adminToken}}
+
+###
+
+### [GET] Tentar listar usuários sem token (deve retornar 401)
+GET {{baseUrl}}/users
+
+###
+
+### [GET] Adotante buscando próprio perfil (adopter)
+GET {{baseUrl}}/users/2
+Authorization: Bearer {{adopterToken}}
+
+###
+
+### [GET] Adotante tentando ver outro usuário (deve retornar 403)
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{adopterToken}}
+
+### ============================================================
+### PETS - Rota Pública
+### ============================================================
+
+### [GET] Listar pets disponíveis (público - sem token)
+GET {{baseUrl}}/pets/available
+
+### ============================================================
+### PETS - Rotas Protegidas (Admin)
+### ============================================================
+
+### [GET] Listar todos os pets (admin)
+GET {{baseUrl}}/pets
+Authorization: Bearer {{adminToken}}
+
+###
+
+### [POST] Cadastrar novo pet (admin)
+POST {{baseUrl}}/pets
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Rex",
+  "age": 3,
+  "species": "dog",
+  "size": "medium",
+  "description": "Cão amigável e brincalhão, vacinado e castrado"
+}
+
+###
+
+### [POST] Cadastrar outro pet (admin)
+POST {{baseUrl}}/pets
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Mimi",
+  "age": 2,
+  "species": "cat",
+  "size": "small",
+  "description": "Gatinha dócil e carinhosa"
+}
+
+###
+
+### [GET] Buscar pet por ID (admin)
+GET {{baseUrl}}/pets/1
+Authorization: Bearer {{adminToken}}
+
+###
+
+### [PUT] Atualizar pet (admin)
+PUT {{baseUrl}}/pets/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Rex Atualizado",
+  "age": 4,
+  "description": "Cão adulto muito dócil"
+}
+
+###
+
+### [DELETE] Remover pet disponível (admin)
+DELETE {{baseUrl}}/pets/2
+Authorization: Bearer {{adminToken}}
+
+###
+
+### [POST] Tentar cadastrar pet sem campos obrigatórios (deve retornar 400)
+POST {{baseUrl}}/pets
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Pet Incompleto"
+}
+
+###
+
+### [POST] Tentar cadastrar pet com porte inválido (deve retornar 400)
+POST {{baseUrl}}/pets
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Pet Inválido",
+  "species": "dog",
+  "size": "gigante"
+}
+
+###
+
+### [POST] Adotante tentando cadastrar pet (deve retornar 403)
+POST {{baseUrl}}/pets
+Authorization: Bearer {{adopterToken}}
+Content-Type: application/json
+
+{
+  "name": "Pet Não Autorizado",
+  "species": "dog",
+  "size": "small"
+}
+
+### ============================================================
+### ADOÇÕES
+### ============================================================
+
+### [POST] Realizar adoção de pet (adopter)
+POST {{baseUrl}}/adoptions
+Authorization: Bearer {{adopterToken}}
+Content-Type: application/json
+
+{
+  "pet_id": 1
+}
+
+###
+
+### [POST] Tentar adotar o mesmo pet novamente (deve retornar 400)
+POST {{baseUrl}}/adoptions
+Authorization: Bearer {{adopterToken}}
+Content-Type: application/json
+
+{
+  "pet_id": 1
+}
+
+###
+
+### [GET] Listar todas as adoções (admin)
+GET {{baseUrl}}/adoptions
+Authorization: Bearer {{adminToken}}
+
+###
+
+### [POST] Admin tentando adotar um pet (deve retornar 403)
+POST {{baseUrl}}/adoptions
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "pet_id": 1
+}
+
+###
+
+### [DELETE] Tentar remover pet já adotado (deve retornar 400)
+DELETE {{baseUrl}}/pets/1
+Authorization: Bearer {{adminToken}}
